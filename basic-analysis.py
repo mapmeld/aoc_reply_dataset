@@ -7,5 +7,6 @@ tweets = os.listdir('./all_tweets')
 for tweet in tweets:
     if '.json' in tweet:
         d = json.loads(open('./all_tweets/' + tweet, 'r').read())
+        print(len(d['replies']))
         totalcount += len(d['replies'])
 print(totalcount)
