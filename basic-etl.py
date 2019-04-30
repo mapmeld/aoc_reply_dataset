@@ -58,3 +58,61 @@ CREATE TABLE combined AS (
     JOIN origins ON replies.convoid = origins.originid
 );
 """
+
+"""
+APPROACH A
+"""
+
+"""
+APPROACH B
+
+SELECT COUNT(*), screenname FROM replies
+    WHERE LOWER(screenname) LIKE '%trump%' OR LOWER(printname) LIKE '%trump%'
+        OR LOWER(screenname) LIKE '%maga%' OR LOWER(printname) LIKE '%maga%'
+        OR LOWER(screenname) LIKE '%anon%' OR LOWER(printname) LIKE '%anon%'
+        OR screenname ~ '\d\d\d$' OR printname ~ '\d\d\d\d\d$'
+    GROUP BY screenname
+    ORDER BY COUNT(*) DESC;
+
+WITH funusers AS (
+    SELECT COUNT(*) AS count, screenname FROM replies
+        WHERE LOWER(screenname) LIKE '%trump%' OR LOWER(printname) LIKE '%trump%'
+            OR LOWER(screenname) LIKE '%maga%' OR LOWER(printname) LIKE '%maga%'
+            OR LOWER(screenname) LIKE '%anon%' OR LOWER(printname) LIKE '%anon%'
+            OR screenname ~ '\d\d\d$' OR printname ~ '\d\d\d\d\d$'
+        GROUP BY screenname
+        ORDER BY COUNT(*)
+)
+SELECT AVG(count) FROM funusers;
+
+SELECT COUNT(*) FROM replies
+    WHERE LOWER(screenname) LIKE '%trump%' OR LOWER(printname) LIKE '%trump%'
+        OR LOWER(screenname) LIKE '%maga%' OR LOWER(printname) LIKE '%maga%'
+        OR LOWER(screenname) LIKE '%anon%' OR LOWER(printname) LIKE '%anon%'
+        OR screenname ~ '\d\d\d$' OR printname ~ '\d\d\d\d\d$';
+
+DROP TABLE IF EXISTS bset;
+CREATE TABLE bset AS (SELECT * FROM combined);
+ALTER TABLE bset ADD COLUMN skeptical_name BOOLEAN;
+UPDATE bset SET skeptical_name = FALSE WHERE 1 = 1;
+UPDATE bset SET skeptical_name = TRUE WHERE
+        LOWER(screenname) LIKE '%trump%' OR LOWER(printname) LIKE '%trump%'
+        OR LOWER(screenname) LIKE '%maga%' OR LOWER(printname) LIKE '%maga%'
+        OR LOWER(screenname) LIKE '%anon%' OR LOWER(printname) LIKE '%anon%'
+        OR screenname ~ '\d\d\d$' OR printname ~ '\d\d\d\d\d$';
+
+DROP TABLE IF EXISTS bset_automl;
+CREATE TABLE bset_automl AS (
+    SELECT REPLACE(CONCAT(CONCAT(originbody, ' || '), body), E'\n', ''), skeptical_name
+    FROM bset
+);
+
+DROP TABLE IF EXISTS bset_automl_2;
+CREATE TABLE bset_automl_2 AS (
+    SELECT REPLACE(body, E'\n', ''), skeptical_name
+    FROM bset
+);
+"""
+
+# sql2csv --db postgres:///tweetreplies --query 'SELECT * FROM bset_automl LIMIT 99000' > all_tweets/bset_automl.csv
+# sql2csv --db postgres:///tweetreplies --query 'SELECT * FROM bset_automl_2 WHERE LENGTH(TRIM(replace)) > 0 LIMIT 99000' > all_tweets/bset_automl_2.csv
