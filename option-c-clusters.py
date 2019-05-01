@@ -1,5 +1,6 @@
 # word2vec and k-means clustering
 # based strongly on https://medium.com/ml2vec/using-word2vec-to-analyze-reddit-comments-28945d8cee57
+# pip install psycopg2 nltk gensim sklearn pandas numpy
 
 import psycopg2
 import nltk.data
