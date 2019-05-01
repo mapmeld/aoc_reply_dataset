@@ -1,13 +1,12 @@
 # ETL JSON files into CSV and PostgreSQL
 
 # run once
-#   pip install csvkit psycopg2
+#   pip install csvkit
 #   initdb dataaoc
 #   postgres -D dataaoc/
 #   createdb tweetreplies
 
 import os, csv, json
-import psycopg2
 
 tweets = os.listdir('./all_tweets')
 
@@ -57,10 +56,6 @@ CREATE TABLE combined AS (
     SELECT * FROM replies
     JOIN origins ON replies.convoid = origins.originid
 );
-"""
-
-"""
-APPROACH A
 """
 
 """
