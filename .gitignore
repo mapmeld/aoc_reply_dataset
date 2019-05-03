@@ -5,3 +5,4 @@ all_tweets/*.csv
 model_full_twitter
 out_full
 profanity.txt
+*.pkl

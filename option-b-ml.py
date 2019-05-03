@@ -1,3 +1,4 @@
+import os
 import psycopg2
 
 # postgresql
@@ -52,3 +53,17 @@ conn.commit()
 
 # sql2csv --no-header-row --db postgres:///tweetreplies --query 'SELECT * FROM bset_automl' > all_tweets/bset_automl.csv
 # sql2csv --no-header-row --db postgres:///tweetreplies --query 'SELECT * FROM bset_automl_2 WHERE LENGTH(TRIM(replace)) > 0' > all_tweets/bset_automl_2.csv
+
+cur.execute('DROP TABLE IF EXISTS bset_azure')
+cur.execute("""CREATE TABLE bset_azure AS (
+    SELECT * FROM bset
+    WHERE profane_text
+)
+UNION (
+    SELECT * FROM bset
+    WHERE profane_text = FALSE
+    ORDER BY RANDOM()
+    LIMIT 15000
+)""")
+conn.commit()
+os.system("sql2csv --db postgres:///tweetreplies --query 'SELECT * FROM bset_azure WHERE LENGTH(TRIM(body)) > 0' > all_tweets/bset_azure.csv")

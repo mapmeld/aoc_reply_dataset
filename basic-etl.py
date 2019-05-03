@@ -65,6 +65,7 @@ SELECT COUNT(*), screenname FROM replies
     WHERE LOWER(screenname) LIKE '%trump%' OR LOWER(printname) LIKE '%trump%'
         OR LOWER(screenname) LIKE '%maga%' OR LOWER(printname) LIKE '%maga%'
         OR LOWER(screenname) LIKE '%anon%' OR LOWER(printname) LIKE '%anon%'
+        OR LOWER(screenname) LIKE '%nationalis%' OR LOWER(printname) LIKE '%nationalis%'
         OR screenname ~ '\d\d\d$' OR printname ~ '\d\d\d\d\d$'
     GROUP BY screenname
     ORDER BY COUNT(*) DESC;
@@ -74,6 +75,7 @@ WITH funusers AS (
         WHERE LOWER(screenname) LIKE '%trump%' OR LOWER(printname) LIKE '%trump%'
             OR LOWER(screenname) LIKE '%maga%' OR LOWER(printname) LIKE '%maga%'
             OR LOWER(screenname) LIKE '%anon%' OR LOWER(printname) LIKE '%anon%'
+            OR LOWER(screenname) LIKE '%nationalis%' OR LOWER(printname) LIKE '%nationalis%'
             OR screenname ~ '\d\d\d$' OR printname ~ '\d\d\d\d\d$'
         GROUP BY screenname
         ORDER BY COUNT(*)
@@ -84,6 +86,7 @@ SELECT COUNT(*) FROM replies
     WHERE LOWER(screenname) LIKE '%trump%' OR LOWER(printname) LIKE '%trump%'
         OR LOWER(screenname) LIKE '%maga%' OR LOWER(printname) LIKE '%maga%'
         OR LOWER(screenname) LIKE '%anon%' OR LOWER(printname) LIKE '%anon%'
+        OR LOWER(screenname) LIKE '%nationalis%' OR LOWER(printname) LIKE '%nationalis%'
         OR screenname ~ '\d\d\d$' OR printname ~ '\d\d\d\d\d$';
 
 DROP TABLE IF EXISTS aset;
@@ -94,6 +97,7 @@ UPDATE aset SET skeptical_name = TRUE WHERE
         LOWER(screenname) LIKE '%trump%' OR LOWER(printname) LIKE '%trump%'
         OR LOWER(screenname) LIKE '%maga%' OR LOWER(printname) LIKE '%maga%'
         OR LOWER(screenname) LIKE '%anon%' OR LOWER(printname) LIKE '%anon%'
+        OR LOWER(screenname) LIKE '%nationalis%' OR LOWER(printname) LIKE '%nationalis%'
         OR screenname ~ '\d\d\d$' OR printname ~ '\d\d\d\d\d$';
 
 DROP TABLE IF EXISTS aset_automl;
@@ -107,7 +111,27 @@ CREATE TABLE aset_automl_2 AS (
     SELECT REPLACE(body, E'\n', ''), skeptical_name
     FROM aset
 );
+
+DROP TABLE IF EXISTS aset_azure;
+CREATE TABLE aset_azure AS (
+    SELECT
+        skeptical_name, timestamp, verified, mentions, cards, body, lang, links, likes, retweets, origintime, originname, originsn, originverified, originbody, quotescreenname, quotetext, originlikes, originretweets,
+        REPLACE(REPLACE(REPLACE(REPLACE(LOWER(printname), 'trump', ''), 'maga', ''), 'anon', ''), 'nationalis', '') AS printname,
+        REPLACE(REPLACE(REPLACE(REPLACE(LOWER(screenname), 'trump', ''), 'maga', ''), 'anon', ''), 'nationalis', '') AS screenname
+    FROM aset
+    WHERE skeptical_name
+) UNION (
+    SELECT
+        skeptical_name, timestamp, verified, mentions, cards, body, lang, links, likes, retweets, origintime, originname, originsn, originverified, originbody, quotescreenname, quotetext, originlikes, originretweets,
+        REPLACE(REPLACE(REPLACE(REPLACE(LOWER(printname), 'trump', ''), 'maga', ''), 'anon', ''), 'nationalis', '') AS printname,
+        REPLACE(REPLACE(REPLACE(REPLACE(LOWER(screenname), 'trump', ''), 'maga', ''), 'anon', ''), 'nationalis', '') AS screenname
+    FROM aset
+    WHERE skeptical_name = FALSE
+    LIMIT 19500
+);
 """
 
 # sql2csv --no-header-row --db postgres:///tweetreplies --query 'SELECT * FROM aset_automl LIMIT 99000' > all_tweets/aset_automl.csv
 # sql2csv --no-header-row --db postgres:///tweetreplies --query 'SELECT * FROM aset_automl_2 WHERE LENGTH(TRIM(replace)) > 0 LIMIT 99000' > all_tweets/aset_automl_2.csv
+
+# sql2csv --db postgres:///tweetreplies --query 'SELECT * FROM aset_azure' > all_tweets/aset_azure.csv
