@@ -23,7 +23,7 @@ fetch('replies-by-tstamp.json')
         let zeroHour = data.bad[tweet][0] - 1;
         data.bad[tweet].forEach((time) => {
           let minuteTime = Math.ceil((time - zeroHour) / 30);
-          console.log(minuteTime);
+          //console.log(minuteTime);
           while (badminutes.length < minuteTime) {
             badminutes.push(0);
           }
