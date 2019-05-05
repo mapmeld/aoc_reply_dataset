@@ -4,7 +4,7 @@
 
 ### The Problem
 
-Rep. Alexandria Ocasio-Cortez's '@AOC' Twitter replies are a flashpoint for polarized political discussions.
+Rep. Alexandria Ocasio-Cortez's '@AOC' Twitter replies are a flashpoint for  political discussions.
 
 Vitriolic users are often called out for being 'bots'. I tried blocking the worst of the accounts here, but more appear here and in other popular accounts (news articles, other reps who have been featured on Fox News). I can't tell if these accounts represent real users, burner accounts to troll with until they get blocked, or organized opposition.
 
@@ -21,7 +21,11 @@ The Twitter API doesn't support this, so I am using a userscript (GreaseMonkey /
 I include a sample JSON of replies in this repo - one JSON file will be generated
 for each original AOC Tweet or Retweet. Please let me know how structure can be improved.
 
+I am willing to share the full (110k reply-Tweets) dataset with appropriate groups.
+Please get in touch.
+
 ### License
 
 Script is MIT-licensed. Please be aware that this doesn't use Twitter's official
-API, so is likely to miss Tweets (it seems to get about 254 replies), be broken by changes to Twitter UI, or get you into trouble for breaking Twitter's ToS.
+API, so is likely to get you into trouble for breaking Twitter's ToS.
+It may also miss Tweets (it seems to get about 254 replies), and be broken by changes to the Twitter UI.
