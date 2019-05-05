@@ -52,8 +52,6 @@ envirowords = [
 ]
 
 badwords = [
-    'fuck',
-    'shit',
     'clown',
     'bigot',
     'asshole',
@@ -102,8 +100,8 @@ cur.execute('SELECT origintime, originid FROM origins \
         + '%\' ORDER BY originid')
 for row in cur.fetchall():
     tstamps2.append(row[0])
-    bysource[float(row[1])] = []
-    badbysource[float(row[1])] = []
+    bysource[int(row[1])] = []
+    badbysource[int(row[1])] = []
 
 opt = open('visualize-green/origin-environment.json', 'w')
 opt.write(json.dumps(tstamps2))
@@ -111,17 +109,17 @@ opt.write(json.dumps(tstamps2))
 for sourceTweet in bysource.keys():
     cur.execute('SELECT timestamp FROM combined \
         WHERE originid = \'' + str(sourceTweet) + '\' \
-        AND LOWER(body) LIKE \'%'
+        AND (LOWER(body) LIKE \'%'
         + '%\' OR LOWER(body) LIKE \'%'.join(envirowords)
-        + '%\' ORDER BY timestamp')
+        + '%\') ORDER BY timestamp')
     for row in cur.fetchall():
         bysource[sourceTweet].append(int(row[0]))
 
     cur.execute('SELECT timestamp FROM combined \
         WHERE originid = \'' + str(sourceTweet) + '\' \
-        AND LOWER(body) LIKE \'%'
+        AND (LOWER(body) LIKE \'%'
         + '%\' OR LOWER(body) LIKE \'%'.join(badwords)
-        + '%\' ORDER BY timestamp')
+        + '%\') ORDER BY timestamp')
     for row in cur.fetchall():
         badbysource[sourceTweet].append(int(row[0]))
 
