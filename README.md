@@ -13,7 +13,11 @@ Vitriolic users are often called out for being 'bots'. I tried blocking the wors
 I include a sample JSON of replies in replies_by_tweet and the full dataset in
 all_tweets/ - one JSON file is generated for each original AOC Tweet or Retweet. Please let me know how structure can be improved.
 
-The Twitter API doesn't support scraping replies, so I am using a userscript (scan.js) for the GreaseMonkey / TamperMonkey browser extension. **IMPORTANT UPDATE, 2020:** Twitter now loads only a few replies at a time - you can scroll past 100 Tweets, but only 7 will be in the DOM at any one time. A userscript remains the BEST way to scrape Tweets, but you would need to rewrite the script to automate scrolling and capturing.
+The Twitter API doesn't support scraping replies, so I am using a userscript (scan.js) for the GreaseMonkey / TamperMonkey browser extension. **IMPORTANT UPDATE, 2020:** Twitter now loads only a few replies at a time - you can scroll past 100 Tweets, but only 7 will be in the DOM at any one time. Scraping remains the BEST way to scrape Tweets. Here are your options:
+
+- https://github.com/paulgb/Treeverse
+- https://github.com/twintproject/twint
+- rewriting this userscript
 
 ### Methodology
 
